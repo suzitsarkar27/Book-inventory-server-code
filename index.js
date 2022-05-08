@@ -35,10 +35,10 @@ async function run() {
       res.send(service);
     });
 
-    app.get("/data", async (req, res) => {
+    app.post("/data", async (req, res) => {
       const newData = req.body;
-      const service = await servicecollection.insertOne(query);
-      res.send(service);
+      const result = await servicecollection.insertOne(newData);
+      res.send(result);
     });
   } finally {
   }
