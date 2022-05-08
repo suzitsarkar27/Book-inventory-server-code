@@ -34,6 +34,12 @@ async function run() {
       const service = await servicecollection.findOne(query);
       res.send(service);
     });
+
+    app.get("/data", async (req, res) => {
+      const newData = req.body;
+      const service = await servicecollection.insertOne(query);
+      res.send(service);
+    });
   } finally {
   }
 }
