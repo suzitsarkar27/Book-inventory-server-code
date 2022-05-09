@@ -64,7 +64,7 @@ async function run() {
 run().catch(console.dir);
 
 app.get("/", (req, res) => {
-  res.send("BOOK INVENTORY CRUD IS RUNNING");
+  res.send("BOOK INVENTORY CRUD IS RUNNING MONGODB DATA BASE");
 });
 app.listen(port, () => {
   console.log("LISTING CRUD IS RUNNING", port);
