@@ -22,6 +22,25 @@ async function run() {
     await client.connect();
     const servicecollection = client.db("data").collection("servic");
 
+    // update user
+    app.put("/data/:id", async (req, res) => {
+      const id = req.params.id;
+      const updateUser = req.params;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updatedDoc = {
+        $set: {
+          quantity: updateUser.quantity,
+        },
+      };
+      const result = await servicecollection.updateOne(
+        filter,
+        updatedDoc,
+        options
+      );
+      res.send(result);
+    });
+
     // AUTH
     app.post("/login", async (req, res) => {
       const user = req.body;
@@ -51,6 +70,8 @@ async function run() {
       const result = await servicecollection.insertOne(newData);
       res.send(result);
     });
+
+    //
 
     app.delete("/data/:id", async (req, res) => {
       const id = req.params.id;
