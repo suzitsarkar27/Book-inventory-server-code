@@ -25,7 +25,8 @@ async function run() {
     // update user
     app.put("/data/:id", async (req, res) => {
       const id = req.params.id;
-      const updateUser = req.params;
+      const updateUser = req.body;
+      console.log(updateUser);
       const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
       const updatedDoc = {
@@ -43,11 +44,10 @@ async function run() {
 
     // AUTH
     app.post("/login", async (req, res) => {
-      const user = req.body;
-      const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-        expiresIn: "1d",
-      });
-      res.send(accessToken);
+      const email = req.body;
+      const token = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
+
+      res.send({ token });
     });
 
     app.get("/data", async (req, res) => {
@@ -67,8 +67,17 @@ async function run() {
 
     app.post("/data", async (req, res) => {
       const newData = req.body;
-      const result = await servicecollection.insertOne(newData);
-      res.send(result);
+
+      const tokenInfo = req.headers.authorization;
+      const [email, accessToken] = tokenInfo.split(" ");
+
+      const decoded = verifyToken(accessToken);
+      if (email === decoded.email) {
+        const result = await servicecollection.insertOne(newData);
+        res.send(result);
+      } else {
+        res.send({ success: "UnAuthoraized Access" });
+      }
     });
 
     // //
@@ -90,3 +99,18 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log("LISTING CRUD IS RUNNING", port);
 });
+
+// verify tokon funcation
+function verifyToken(token) {
+  let email;
+  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
+    if (err) {
+      email = "Invalid email";
+    }
+    if (decoded) {
+      console.log(decoded);
+      email = decoded;
+    }
+  });
+  return email;
+}
