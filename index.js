@@ -65,28 +65,20 @@ async function run() {
       res.send(service);
     });
 
-    //  post data
-    // app.get("/post", async (req, res) => {
-    //   const query = {};
-    //   const cursor = awaitservicecollection.find(query);
-    //   const post = await cursor.toArray();
-    //   res.send(post);
-    // });
-
-    // app.post("/data", async (req, res) => {
-    //   const newData = req.body;
-    //   const result = await servicecollection.insertOne(newData);
-    //   res.send(result);
-    // });
+    app.post("/data", async (req, res) => {
+      const newData = req.body;
+      const result = await servicecollection.insertOne(newData);
+      res.send(result);
+    });
 
     // //
 
-    // app.delete("/data/:id", async (req, res) => {
-    //   const id = req.params.id;
-    //   const query = { _id: ObjectId(id) };
-    //   const result = await servicecollection.deleteOne(query);
-    //   res.send(result);
-    // });
+    app.delete("/data/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await servicecollection.deleteOne(query);
+      res.send(result);
+    });
   } finally {
   }
 }
