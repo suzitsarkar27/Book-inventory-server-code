@@ -30,7 +30,7 @@ async function run() {
       const options = { upsert: true };
       const updatedDoc = {
         $set: {
-          quantity: updateUser.quantity,
+          quintity: updateUser.quintity,
         },
       };
       const result = await servicecollection.updateOne(
@@ -63,6 +63,14 @@ async function run() {
       const query = { _id: ObjectId(id) };
       const service = await servicecollection.findOne(query);
       res.send(service);
+    });
+
+    //  post data
+    app.get("/post", async (req, res) => {
+      const query = {};
+      const cursor = awaitservicecollection.find(query);
+      const post = await cursor.toArray();
+      res.send(post);
     });
 
     app.post("/data", async (req, res) => {
