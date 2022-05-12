@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const app = express();
@@ -42,14 +41,6 @@ async function run() {
       res.send(result);
     });
 
-    // AUTH
-    app.post("/login", async (req, res) => {
-      const email = req.body;
-      const token = jwt.sign(email, process.env.ACCESS_TOKEN_SECRET);
-
-      res.send({ token });
-    });
-
     app.get("/data", async (req, res) => {
       const query = {};
       const cursor = servicecollection.find(query);
@@ -67,17 +58,8 @@ async function run() {
 
     app.post("/data", async (req, res) => {
       const newData = req.body;
-
-      const tokenInfo = req.headers.authorization;
-      const [email, accessToken] = tokenInfo.split(" ");
-
-      const decoded = verifyToken(accessToken);
-      if (email === decoded.email) {
-        const result = await servicecollection.insertOne(newData);
-        res.send(result);
-      } else {
-        res.send({ success: "UnAuthoraized Access" });
-      }
+      const result = await servicecollection.insertOne(newData);
+      res.send(result);
     });
 
     // //
@@ -99,18 +81,3 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log("LISTING CRUD IS RUNNING", port);
 });
-
-// verify tokon funcation
-function verifyToken(token) {
-  let email;
-  jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, function (err, decoded) {
-    if (err) {
-      email = "Invalid email";
-    }
-    if (decoded) {
-      console.log(decoded);
-      email = decoded;
-    }
-  });
-  return email;
-}
